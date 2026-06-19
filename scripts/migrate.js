@@ -37,7 +37,9 @@ class Migration {
   }
 
   async runMigration(filePath) {
-    const migration = await import(filePath);
+    // Convert Windows path to file:// URL for ESM import
+    const fileUrl = new URL(`file://${filePath.replace(/\\/g, '/')}`);
+    const migration = await import(fileUrl);
     const fileName = filePath.split('/').pop().replace('.js', '');
 
     console.log(`🔄 Running migration: ${fileName}`);
@@ -56,7 +58,8 @@ class Migration {
     await this.createMigrationsTable();
 
     const executed = await this.getExecutedMigrations();
-    const migrationFiles = await readdir(join(__dirname, '../src/migrations'));
+    const migrationsPath = join(__dirname, '../src/migrations');
+    const migrationFiles = await readdir(migrationsPath);
     const files = migrationFiles
       .filter(file => file.endsWith('.js'))
       .sort();
@@ -65,7 +68,8 @@ class Migration {
     for (const file of files) {
       const name = file.replace('.js', '');
       if (!executed.includes(name)) {
-        await this.runMigration(join(__dirname, '../src/migrations', file));
+        const filePath = join(migrationsPath, file);
+        await this.runMigration(filePath);
         count++;
       }
     }
@@ -90,7 +94,8 @@ class Migration {
     const filePath = join(__dirname, '../src/migrations', `${lastMigration}.js`);
 
     try {
-      const migration = await import(filePath);
+      const fileUrl = new URL(`file://${filePath.replace(/\\/g, '/')}`);
+      const migration = await import(fileUrl);
       await migration.down(this.pool);
       await this.pool.query('DELETE FROM migrations WHERE name = $1', [lastMigration]);
       console.log(`✅ Rollback ${lastMigration} completed`);

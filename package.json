@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "migrate:up": "node scripts/migrate.js up",
+    "migrate:down": "node scripts/migrate.js down"
   },
   "repository": {
     "type": "git",
@@ -27,18 +29,20 @@
     "pg": "^8.21.0"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "jest": "^30.4.2",
+    "js-yaml": "^4.1.0",
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2"
   },
   "jest": {
     "testEnvironment": "node",
     "transform": {},
-    "extensionsToTreatAsEsm": [
-      ".js"
-    ],
     "moduleNameMapper": {
       "^(\\.{1,2}/.*)\\.js$": "$1"
-    }
+    },
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
   }
 }
