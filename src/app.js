@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import applicationRoutes from './routes/applicationRoutes.js';
+import { errorHandler } from './utils/errorHandler.js';
 
 const app = express();
 
@@ -9,6 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use('/api/applications', applicationRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -19,8 +22,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Route not found'
+  });
+});
 
 // Global error handler (from utils)
-
+app.use(errorHandler);
 
 export default app;
