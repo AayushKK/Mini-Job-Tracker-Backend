@@ -8,7 +8,7 @@ A RESTful API for tracking job applications built with Node.js, Express, and Pos
 
 ### 🧪 Jest Test Results
 
-![Jest Test Results](./screenshots/jest-test.png)
+![Jest Test Results](./screenshots/jest_test.png)
 *All tests passing with coverage report*
 
 ### 📬 Postman API Testing
